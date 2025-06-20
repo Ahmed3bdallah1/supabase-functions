@@ -51,17 +51,38 @@ serve(async (req) => {
       )
     }
 
+    // if(user.user_type != "Admin") {
+    //   return new Response(
+    //     JSON.stringify({ error: 'Forbidden - Admin view only' }),
+    //     {
+    //       status: 422,
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         ...corsHeaders
+    //       } 
+    //     }
+    //   )
+    // }
+
     // 2. Get all counts in parallel
     const [
       usersResponse,
       productsResponse,
       sellersResponse,
-      ordersResponse
+      ordersResponse,
+      brandsResponce,
+      categoriesResponce,
+      governmentsResponce,
+      couponsResponce,
     ] = await Promise.all([
       supabase.from('users').select('*', { count: 'exact', head: true }),
       supabase.from('products').select('*', { count: 'exact', head: true }),
       supabase.from('sellers').select('*', { count: 'exact', head: true }),
-      supabase.from('orders').select('*', { count: 'exact', head: true })
+      supabase.from('orders').select('*', { count: 'exact', head: true }),
+      supabase.from('brands').select('*', { count: 'exact', head: true }),
+      supabase.from('categories').select('*', { count: 'exact', head: true }),
+      supabase.from('governments').select('*', { count: 'exact', head: true }),
+      supabase.from('coupons').select('*', { count: 'exact', head: true }),
     ])
 
     // 3. Return the counts
@@ -72,7 +93,11 @@ serve(async (req) => {
           users: usersResponse.count || 0,
           products: productsResponse.count || 0,
           sellers: sellersResponse.count || 0,
-          orders: ordersResponse.count || 0
+          orders: ordersResponse.count || 0,
+          brands: brandsResponce.count || 0,
+          categories: categoriesResponce.count || 0,
+          governments: governmentsResponce.count || 0,
+          coupons: couponsResponce.count || 0
         }
       }),
       { 
